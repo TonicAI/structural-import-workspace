@@ -1,0 +1,55 @@
+name: 'Structural Workspace Import'
+description: 'Import configuration to your Tonic Structural workspace'
+author: 'Tonic.ai'
+branding:
+  icon: "download"
+  color: "blue"
+inputs:
+  api-key:
+    description: 'Structural API key with access to the workspace'
+    required: true
+  workspace-id:
+    description: 'ID of the Structural workspace to import to'
+    required: true
+  config-path:
+    description: 'Path to the workspace configuration file to import'
+    required: true
+  base-url:
+    description: 'Base URL for Structural API'
+    required: false
+    default: 'https://app.tonic.ai'
+
+outputs:
+  result:
+    description: 'Result message from the import operation'
+    value: ${{ steps.import.outputs.result }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Import workspace configuration
+      id: import
+      shell: bash
+      run: |
+        # Check if config file exists
+        if [ ! -f "${{ inputs.config-path }}" ]; then
+          echo "Error: Configuration file not found at ${{ inputs.config-path }}"
+          exit 1
+        fi
+        
+        # Run curl to import workspace configuration
+        RESPONSE=$(curl --fail --silent --show-error \
+          -X PUT "${{ inputs.base-url }}/api/workspace/${{ inputs.workspace-id }}/import" \
+          -H "Authorization: APIKEY ${{ inputs.api-key }}" \
+          -H "Content-Type: application/json" \
+          -d @"${{ inputs.config-path }}")
+        
+        # Check if import was successful
+        if [ $? -eq 0 ]; then
+          echo "Workspace configuration successfully imported to workspace ${{ inputs.workspace-id }}"
+          echo "result=Success: Configuration imported to workspace ${{ inputs.workspace-id }}" >> $GITHUB_OUTPUT
+        else
+          echo "Failed to import workspace configuration"
+          echo "Response: $RESPONSE"
+          exit 1
+        fi
