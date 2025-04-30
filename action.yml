@@ -5,16 +5,16 @@ branding:
   icon: "download"
   color: "blue"
 inputs:
-  api-key:
+  api_key:
     description: 'Structural API key with access to the workspace'
     required: true
-  workspace-id:
+  workspace_id:
     description: 'ID of the Structural workspace to import to'
     required: true
-  config-path:
+  config_path:
     description: 'Path to the workspace configuration file to import'
     required: true
-  base-url:
+  api_url:
     description: 'Base URL for Structural API'
     required: false
     default: 'https://app.tonic.ai'
@@ -32,22 +32,22 @@ runs:
       shell: bash
       run: |
         # Check if config file exists
-        if [ ! -f "${{ inputs.config-path }}" ]; then
-          echo "Error: Configuration file not found at ${{ inputs.config-path }}"
+        if [ ! -f "${{ inputs.config_path }}" ]; then
+          echo "Error: Configuration file not found at ${{ inputs.config_path }}"
           exit 1
         fi
-        
+
         # Run curl to import workspace configuration
         RESPONSE=$(curl --fail --silent --show-error \
-          -X PUT "${{ inputs.base-url }}/api/workspace/${{ inputs.workspace-id }}/import" \
-          -H "Authorization: APIKEY ${{ inputs.api-key }}" \
+          -X PUT "${{ inputs.api_url }}/api/workspace/${{ inputs.workspace_id }}/import" \
+          -H "Authorization: APIKEY ${{ inputs.api_key }}" \
           -H "Content-Type: application/json" \
-          -d @"${{ inputs.config-path }}")
-        
+          -d @"${{ inputs.config_path }}")
+
         # Check if import was successful
         if [ $? -eq 0 ]; then
-          echo "Workspace configuration successfully imported to workspace ${{ inputs.workspace-id }}"
-          echo "result=Success: Configuration imported to workspace ${{ inputs.workspace-id }}" >> $GITHUB_OUTPUT
+          echo "Workspace configuration successfully imported to workspace ${{ inputs.workspace_id }}"
+          echo "result=Success: Configuration imported to workspace ${{ inputs.workspace_id }}" >> $GITHUB_OUTPUT
         else
           echo "Failed to import workspace configuration"
           echo "Response: $RESPONSE"

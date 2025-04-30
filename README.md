@@ -4,10 +4,10 @@ This action imports configuration to your Tonic Structural workspace.
 
 ## Inputs
 
-- `api-key` (required): Structural API key with access to the workspace
-- `workspace-id` (required): ID of the Structural workspace to import to
-- `config-path` (required): Path to the workspace configuration file to import
-- `base-url` (optional): Base URL for Structural API, defaults to 'https://app.tonic.ai'
+- `api_key` (required): Structural API key with access to the workspace
+- `workspace_id` (required): ID of the Structural workspace to import to
+- `config_path` (required): Path to the workspace configuration file to import
+- `api_url` (optional): Base URL for Structural API, defaults to 'https://app.tonic.ai'
 
 ## Outputs
 
@@ -23,9 +23,9 @@ steps:
     id: import
     uses: TonicAI/structural-import-workspace@v1
     with:
-      api-key: ${{ secrets.STRUCTURAL_API_KEY }}
-      workspace-id: ${{ vars.STRUCTURAL_WORKSPACE_ID }}
-      config-path: './workspace-config.json'
+      api_key: ${{ secrets.STRUCTURAL_API_KEY }}
+      workspace_id: ${{ vars.STRUCTURAL_WORKSPACE_ID }}
+      config_path: './workspace-config.json'
 ```
 
 ### Complete Workflow Example
@@ -36,7 +36,7 @@ name: Import Structural Workspace
 on:
   workflow_dispatch:
     inputs:
-      workspace-id:
+      workspace_id:
         description: 'ID of the Structural workspace to import to'
         required: true
         type: string
@@ -57,9 +57,9 @@ jobs:
         id: import
         uses: TonicAI/structural-import-workspace@v1
         with:
-          api-key: ${{ secrets.STRUCTURAL_API_KEY }}
-          workspace-id: ${{ github.event.inputs.workspace-id }}
-          config-path: ${{ github.event.inputs.config-file }}
+          api_key: ${{ secrets.STRUCTURAL_API_KEY }}
+          workspace_id: ${{ github.event.inputs.workspace_id }}
+          config_path: ${{ github.event.inputs.config-file }}
 
       - name: Output result
         run: echo "Import result: ${{ steps.import.outputs.result }}"
